@@ -10,8 +10,20 @@ import InputLabel from "@mui/material/InputLabel";
 import TextField, { TextFieldProps } from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import { OutlinedInputProps } from "@mui/material/OutlinedInput";
+import { useForm, UseFormReturn } from "react-hook-form";
+import { IStockForm } from "../../models/IStockForm";
+import { FormHelperText, Input, Stack } from "@mui/material";
+import { useCallback } from "react";
+import { logUserAction } from "../../services/logging-service";
+import { getCompanyProfile } from "../../services/stock-service";
 
-interface ISearchProps {}
+interface ISearchProps
+  extends Pick<
+    UseFormReturn<IStockForm, any>,
+    "register" | "handleSubmit" | "watch"
+  > {
+  validationError?: string;
+}
 
 const CssTextField = styled(TextField)({
   "& label.Mui-focused": {
@@ -49,6 +61,8 @@ const ValidationTextField = styled(TextField)({
 });
 
 export const Search = (props: ISearchProps) => {
+  const { register, handleSubmit, validationError } = props;
+
   return (
     // <Box
     //   component="form"
@@ -68,18 +82,39 @@ export const Search = (props: ISearchProps) => {
     //     id="validation-outlined-input"
     //   />
     // </Box>
-    <Paper
-      component="form"
-      sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
-    >
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Search Google Maps"
-        inputProps={{ "aria-label": "search google maps" }}
+    <>
+      {/* <Paper
+        component="form"
+        sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
+      > */}
+      <FormHelperText error={!!validationError}>
+        {validationError}
+      </FormHelperText>
+      <TextField
+        // sx={{ ml: 1, flex: 1 }}
+        variant="outlined"
+        required
+        label="Symbol"
+        autoFocus
+        margin="none"
+        fullWidth
+        {...register("searchPhase")}
+        // error={!!validationError}
+        // helperText={validationError}
+        inputProps={{
+          "aria-label": "search google maps",
+        }}
       />
-      <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
-        <SearchIcon />
-      </IconButton>
-    </Paper>
+
+      {/* <IconButton
+          type="button"
+          sx={{ p: "10px" }}
+          aria-label="search"
+          onClick={handleSubmit(onSubmit)}
+        >
+          <SearchIcon />
+        </IconButton> */}
+      {/* </Paper> */}
+    </>
   );
 };

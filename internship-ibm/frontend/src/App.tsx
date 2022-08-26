@@ -1,8 +1,7 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import "./App.css";
-import { CompanyDetails } from "./components/company-details";
-import { StockForm } from "./components/stock-form";
 import { MainPage } from "./pages";
+import { styled } from "@mui/material/styles";
+import { grey } from "@mui/material/colors";
 
 const theme = createTheme({
   palette: {
@@ -15,18 +14,30 @@ const theme = createTheme({
   },
 });
 
+const StyledAppContainer = styled("div")(({ theme }) => ({
+  textAlign: "center",
+}));
+
+const Header = styled("header")(({ theme }) => ({
+  backgroundColor: grey[50],
+  minHeight: "calc(100vh - 20px)",
+  padding: "10px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "calc(10px + 2vmin)",
+  color: "white",
+}));
+
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <div className="App">
-        <header className="App-header">
+      <StyledAppContainer>
+        <Header>
           <MainPage />
-        </header>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        />
-      </div>
+        </Header>
+      </StyledAppContainer>
     </ThemeProvider>
   );
 };

@@ -1,45 +1,38 @@
-import { Button, Card, CardContent, Grid, Stack } from "@mui/material";
+import { Card, CardContent, Grid } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { DatePickerRange } from "../date-picker-range";
 import { Search } from "../search/search";
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
-import { useCallback, useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { useCallback } from "react";
 import { IStockForm } from "../../models/IStockForm";
 import { logUserAction } from "../../services/logging-service";
 import SearchIcon from "@mui/icons-material/Search";
 import { getCompanyProfile } from "../../services/stock-service";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { setCompany, setSearchData } from "../../stores/companyReducer";
-import { selectSearchData } from "../../stores/selectors";
+import {
+  setCompany,
+  setLoading,
+  setSearchData,
+} from "../../stores/companyReducer";
+import { selectLoading } from "../../stores/selectors";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { stockFormValidationSchema } from "../../validations";
+import { GradientButton } from "../gradient-button";
 
 interface IStockFormProps {}
 
-const lettersOrSpacesRegex = /^[a-zA-Z\s]+$/g;
-
-const validationSchema = yup.object({
-  searchPhase: yup
-    .string()
-    .required("Required")
-    .max(35, "Max 35 signs")
-    .matches(lettersOrSpacesRegex, "Only letters and whitespaces are allowed"),
-  endDate: yup.date(),
-  // .min(yup.ref("startDate"), "End date can't be before start date"),
-  // startDate: yup.date().required("Required"),
-  // endDate: yup.date().nullable().required("Required"),
-});
-
 export const StockForm = (props: IStockFormProps) => {
   const methods = useForm<IStockForm>({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(stockFormValidationSchema),
     reValidateMode: "onChange",
     mode: "all",
   });
 
-  const { register, handleSubmit, watch, formState } = methods;
+  const { handleSubmit, formState } = methods;
 
   const dispatch = useDispatch();
+
+  const isLoading = useSelector(selectLoading);
 
   const onSubmit = useCallback(
     (data: IStockForm) => {
@@ -47,12 +40,15 @@ export const StockForm = (props: IStockFormProps) => {
       if (!formState.isValid) return;
 
       console.log(data);
+      dispatch(setLoading(true));
+
       logUserAction(data).then(({ data }) => {
         console.log("Sending completed", data);
-        getCompanyProfile(data.searchPhase).then((resp) => {
+        getCompanyProfile(data.searchPhrase).then((resp) => {
           console.log("resp.data", resp.data);
           dispatch(setCompany(resp.data));
           dispatch(setSearchData(data));
+          dispatch(setLoading(false));
         });
       });
     },
@@ -60,7 +56,7 @@ export const StockForm = (props: IStockFormProps) => {
   );
 
   return (
-    <Card className="custom-card" sx={{ minWidth: "75vw" }}>
+    <Card sx={{ minWidth: "75vw" }}>
       <CardContent>
         <FormProvider {...methods}>
           <form>
@@ -73,28 +69,21 @@ export const StockForm = (props: IStockFormProps) => {
                 rowSpacing={1}
                 columnSpacing={{ xs: 1, sm: 2, md: 3 }}
               >
-                <Search
-                  register={register}
-                  handleSubmit={handleSubmit}
-                  watch={watch}
-                  validationError={formState.errors.searchPhase?.message}
-                />
+                <Search />
               </Grid>
               <Grid item xs={12} md={7}>
-                <DatePickerRange
-                  register={register}
-                  handleSubmit={handleSubmit}
-                />
+                <DatePickerRange />
               </Grid>
               <Grid item xs={12} md={2} lg={2}>
-                <Button
+                <GradientButton
                   variant="contained"
                   endIcon={<SearchIcon />}
-                  style={{ height: "100%", minHeight: "56px" }}
+                  style={{ height: "100%" }}
                   onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                 >
                   Send
-                </Button>
+                </GradientButton>
               </Grid>
             </Grid>
           </form>

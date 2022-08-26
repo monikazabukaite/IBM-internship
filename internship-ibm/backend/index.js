@@ -11,7 +11,6 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-const axios = require("axios");
 const finnhub = require("finnhub");
 
 const mongoose = require("mongoose");
@@ -59,21 +58,14 @@ app.get("/stock-details", (req, res) => {
   const finnhubClient = new finnhub.DefaultApi();
 
   console.log(req.query);
-  // finnhubClient.stockCandles(
-  //   "AAPL",
-  //   "D",
-  //   1590988249,
-  //   1591852249,
-  //   (error, data, response) => {
-  //     console.log(data);
-  //   }
-  // );
+
+  const frequency = "D";
 
   finnhubClient.stockCandles(
     req.query.symbol,
-    "D",
+    frequency,
     Number.parseInt(req.query.from),
-    ßNumber.parseInt(req.query.to),
+    Number.parseInt(req.query.to),
     (error, data, response) => {
       console.log(data);
       res.send(data);
@@ -84,8 +76,8 @@ app.get("/stock-details", (req, res) => {
 const UserActionSchema = new mongoose.Schema({
   symbol: { type: String },
   userIp: { type: String },
-  dateFrom: { type: Date },
-  dateTo: { type: Date, default: Date.now },
+  startDate: { type: Date },
+  endDate: { type: Date, default: Date.now },
 });
 const UserAction = mongoose.model(
   "userAction",
@@ -94,12 +86,12 @@ const UserAction = mongoose.model(
 );
 
 app.post("/log-action", async (req, res, next) => {
+  console.log(req.body);
   UserAction.create(
     {
-      symbol: req.body.symbol,
-      userIp: req.body.userIp,
-      dateFrom: req.body.dateFrom,
-      dateTo: req.body.dateTo,
+      symbol: req.body.searchPhrase,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
     },
     function (err, small) {
       if (err) return console.log(err);
@@ -111,18 +103,16 @@ app.post("/log-action", async (req, res, next) => {
 });
 
 app.get("/log-action", (req, res) => {
+  const page = req.query.page || 1;
+  const limit = (req.query.limit > 100 ? 100 : req.query.limit) || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   UserAction.find(function (error, result) {
-    console.log(result);
-    res.send(result);
+    const trimmedResults = result.slice(startIndex, endIndex);
+    res.send(trimmedResults);
   });
 });
-
-async function listDatabases(client) {
-  databasesList = await client.db().admin().listDatabases();
-
-  console.log("Databases:");
-  databasesList.databases.forEach((db) => console.log(` - ${db.name}`));
-}
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

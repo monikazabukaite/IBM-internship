@@ -1,5 +1,5 @@
 export interface IStockForm {
-    searchPhase: string;
+    searchPhrase: string;
     startDate: Date;
     endDate: Date;
 }

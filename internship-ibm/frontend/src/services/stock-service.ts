@@ -20,7 +20,7 @@ export const getStockDetails = (data: IStockForm) => {
 
     return axios.get<StockCandles>(getAbsoluteUrl(`stock-details`), {
         params: {
-            symbol: data.searchPhase,
+            symbol: data.searchPhrase,
             from: moment(data.startDate).format("X"),
             to: moment(data.endDate).format("X")
         }

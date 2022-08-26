@@ -1,46 +1,43 @@
 import TextField from "@mui/material/TextField";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import { FormHelperText, Grid, makeStyles, Stack } from "@mui/material";
+import { FormHelperText, Grid } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { useFormContext, UseFormReturn } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { IStockForm } from "../../models/IStockForm";
 import moment from "moment";
 
-interface IDatePickerProps
-  extends Pick<UseFormReturn<IStockForm, any>, "register" | "handleSubmit"> {}
+interface IDatePickerProps {}
 
 export const DatePickerRange = (props: IDatePickerProps) => {
-  const { register } = props;
-
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-
-  const onStartDateChange = useCallback((newValue: Date | null) => {
-    setStartDate(newValue);
-  }, []);
-
-  const onEndDateChange = useCallback((newValue: Date | null) => {
-    setEndDate(newValue);
-  }, []);
-
   const {
     formState: { errors },
     setValue,
+    watch,
+    register,
   } = useFormContext<IStockForm>();
 
-  useEffect(() => {
-    if (startDate) {
-      setValue("startDate", startDate);
-    }
-  }, [startDate, setValue]);
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
-  useEffect(() => {
-    if (endDate) {
-      setValue("endDate", endDate);
-    }
-  }, [endDate, setValue]);
+  const onStartDateChange = useCallback(
+    (newValue: Date | null) => {
+      if (newValue) {
+        setValue("startDate", newValue);
+      }
+    },
+    [setValue]
+  );
+
+  const onEndDateChange = useCallback(
+    (newValue: Date | null) => {
+      if (newValue) {
+        setValue("endDate", newValue);
+      }
+    },
+    [setValue]
+  );
 
   return (
     <>
@@ -50,9 +47,8 @@ export const DatePickerRange = (props: IDatePickerProps) => {
           style={{ display: "flex", alignItems: "flex-end", minHeight: "100%" }}
           columnSpacing={2}
         >
-          {/* <Grid item>test</Grid> */}
           <Grid item xs={12} md={6}>
-            <FormHelperText error={!!errors.searchPhase?.message}>
+            <FormHelperText error={!!errors.searchPhrase?.message}>
               {errors.startDate?.message}
             </FormHelperText>
             <DesktopDatePicker

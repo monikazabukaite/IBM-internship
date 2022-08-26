@@ -14,7 +14,6 @@ import { CompanyData } from "../../../models/CompanyData";
 import { Button, Link } from "@mui/material";
 import { useSelector } from "react-redux";
 import { selectSearchData } from "../../../stores/selectors";
-import _ from "lodash";
 import { CandleChart } from "../../candle-chart";
 import { useChartState } from "./hooks";
 

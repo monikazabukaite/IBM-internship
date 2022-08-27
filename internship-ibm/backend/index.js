@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const finnhub = require("finnhub");
+const request = require("supertest");
 
 const mongoose = require("mongoose");
 const dbConnString = process.env.DATABASE_CONNECTION_STRING;
@@ -113,6 +114,15 @@ app.get("/log-action", (req, res) => {
     res.send(trimmedResults);
   });
 });
+
+//Unit tests
+request(app)
+  .get("/company-profile?symbol=AAPL")
+  .expect("Content-Type", /json/)
+  .expect(200)
+  .end(function (err, res) {
+    if (err) throw err;
+  });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

@@ -35,16 +35,12 @@ export const StockForm = (props: IStockFormProps) => {
 
   const onSubmit = useCallback(
     (data: IStockForm) => {
-      console.log(formState.isValid);
       if (!formState.isValid) return;
 
-      console.log(data);
       dispatch(setLoading(true));
 
       logUserAction(data).then(({ data }) => {
-        console.log("Sending completed", data);
         getCompanyProfile(data.searchPhrase).then((resp) => {
-          console.log("resp.data", resp.data);
           dispatch(setCompany(resp.data));
           dispatch(setSearchData(data));
           dispatch(setLoading(false));
@@ -81,7 +77,7 @@ export const StockForm = (props: IStockFormProps) => {
                   onClick={handleSubmit(onSubmit)}
                   disabled={isLoading}
                 >
-                  Send
+                  Search
                 </GradientButton>
               </Grid>
             </Grid>

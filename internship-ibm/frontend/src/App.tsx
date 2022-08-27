@@ -1,18 +1,8 @@
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 import { MainPage } from "./pages";
 import { styled } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#01579b",
-    },
-    secondary: {
-      main: "#0277bd",
-    },
-  },
-});
+import { theme } from "./theme";
 
 const StyledAppContainer = styled("div")(({ theme }) => ({
   textAlign: "center",

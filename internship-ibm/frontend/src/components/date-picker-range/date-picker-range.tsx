@@ -1,4 +1,4 @@
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import { useCallback } from "react";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { FormHelperText, Grid } from "@mui/material";
@@ -48,7 +48,7 @@ export const DatePickerRange = (props: IDatePickerProps) => {
           columnSpacing={2}
         >
           <Grid item xs={12} md={6}>
-            <FormHelperText error={!!errors.searchPhrase?.message}>
+            <FormHelperText error={!!errors.startDate?.message}>
               {errors.startDate?.message}
             </FormHelperText>
             <DesktopDatePicker
@@ -59,8 +59,13 @@ export const DatePickerRange = (props: IDatePickerProps) => {
               className="customDatePicker"
               minDate={new Date(moment().subtract(1, "years").toDate())}
               onChange={onStartDateChange}
-              renderInput={(params) => (
-                <TextField {...params} style={{ width: "100%" }} />
+              renderInput={(params: TextFieldProps) => (
+                <TextField
+                  {...params}
+                  style={{ width: "100%" }}
+                  error={!!errors.startDate?.message}
+                  inputProps={{ "data-testid": "startDate" }}
+                />
               )}
             />
           </Grid>
@@ -75,8 +80,13 @@ export const DatePickerRange = (props: IDatePickerProps) => {
               disableFuture
               minDate={new Date(moment().subtract(1, "years").toDate())}
               onChange={onEndDateChange}
-              renderInput={(params) => (
-                <TextField {...params} style={{ width: "100%" }} />
+              renderInput={(params: TextFieldProps) => (
+                <TextField
+                  {...params}
+                  style={{ width: "100%" }}
+                  error={!!errors.endDate?.message}
+                  inputProps={{ "data-testid": "endDate" }}
+                />
               )}
             />
           </Grid>

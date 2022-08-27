@@ -63,7 +63,7 @@ jest.mock("@mui/material", () => ({
 }));
 
 describe("MainPage", () => {
-  it("should render form fields", async () => {
+  it("should render form", async () => {
     render(
       <Provider store={store}>
         <ThemeProvider theme={theme}>

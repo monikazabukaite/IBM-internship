@@ -64,7 +64,10 @@ export const DatePickerRange = (props: IDatePickerProps) => {
                   {...params}
                   style={{ width: "100%" }}
                   error={!!errors.startDate?.message}
-                  inputProps={{ "data-testid": "startDate" }}
+                  inputProps={{
+                    ...params.inputProps,
+                    "data-testid": "startDate",
+                  }}
                 />
               )}
             />
@@ -85,7 +88,10 @@ export const DatePickerRange = (props: IDatePickerProps) => {
                   {...params}
                   style={{ width: "100%" }}
                   error={!!errors.endDate?.message}
-                  inputProps={{ "data-testid": "endDate" }}
+                  inputProps={{
+                    ...params.inputProps,
+                    "data-testid": "endDate",
+                  }}
                 />
               )}
             />
